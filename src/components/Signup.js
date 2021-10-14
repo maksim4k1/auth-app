@@ -1,5 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
+import { connect } from "react-redux";
+import { NavLink } from "react-router-dom";
+import { loginAction } from "../redux/userAction";
 import { saveUserData } from "../utils";
 
 const SignUp = (props) => {
@@ -15,13 +18,18 @@ const SignUp = (props) => {
 	const handleSignUp = () => {
 		setError(null);
 		setLoading(true);
-		axios.post("http://localhost:1718/login", {
+		axios.post("http://localhost:1717/signin", {
 			username: username.value,
-			password: password.value
+			password: password.value,
+			firstName: firstName.value,
+			age: age.value
 		}).then(response => {
 			setLoading(false);
 			console.log(response)
 			saveUserData(response.data.token, response.data.data);
+
+			props.login();
+
 			props.history.push("/profile");
 		}).catch(error=> {
 			setLoading(false);
@@ -41,6 +49,7 @@ const SignUp = (props) => {
 				<br/>
 				<input
 					type="password"
+					placeholder="enter password"
 					{...password}
 				/>
 				<input
@@ -49,7 +58,7 @@ const SignUp = (props) => {
 					{...firstName} 
 				/>
 				<input
-					type="text"
+					type="number"
 					placeholder="enter your age"
 					{...age} 
 				/>
@@ -58,16 +67,21 @@ const SignUp = (props) => {
 				<br/>
 				<input
 					type='button'
-					value={loading ? "Loading.." : "Login"}
+					value={loading ? "Loading.." : "Sign up"}
 					disabled={loading}
 					onClick={handleSignUp}
 				/>
+				<div><NavLink to="/login">Login</NavLink></div>
 			</form>
 		</div>
 	)
 }
 
-export default SignUp;
+const dispatchToProps = {
+	login: loginAction
+};
+
+export default connect(null, dispatchToProps)(SignUp);
 
 
 const useFormInput = (initValue) => {

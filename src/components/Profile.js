@@ -1,3 +1,5 @@
+import { connect } from "react-redux";
+import { logoutAction } from "../redux/userAction";
 import { deleteUserData, getUser } from "../utils";
 
 const Profile = (props) => {
@@ -6,6 +8,7 @@ const Profile = (props) => {
 
 	const handleLogout = () => {
 		deleteUserData();
+		props.logout();
 		props.history.push("/login");
 	}
 
@@ -19,7 +22,11 @@ const Profile = (props) => {
 	)
 }
 
-export default Profile;
+const dispatchToProps = {
+	logout: logoutAction
+}
+
+export default connect(null, dispatchToProps)(Profile);
 
 // normal - all users
 

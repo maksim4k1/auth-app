@@ -1,5 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
+import { connect } from "react-redux";
+import { NavLink } from "react-router-dom";
+import { loginAction } from "../redux/userAction";
 import { saveUserData } from "../utils";
 
 const Login = (props) => {
@@ -12,13 +15,16 @@ const Login = (props) => {
 	const handleLogin = () => {
 		setError(null);
 		setLoading(true);
-		axios.post("http://localhost:1718/login", {
+		axios.post("http://localhost:1717/login", {
 			username: username.value,
 			password: password.value
 		}).then(response => {
 			setLoading(false);
 			console.log(response)
 			saveUserData(response.data.token, response.data.data);
+			
+			props.login();
+
 			props.history.push("/profile");
 		}).catch(error=> {
 			setLoading(false);
@@ -49,12 +55,17 @@ const Login = (props) => {
 					disabled={loading}
 					onClick={handleLogin}
 				/>
+				<div><NavLink to="/register">Sign Up</NavLink></div>
 			</form>
 		</div>
 	)
 }
 
-export default Login;
+const dispatchToProps = {
+	login: loginAction
+};
+
+export default connect(null, dispatchToProps)(Login);
 
 
 const useFormInput = (initValue) => {
